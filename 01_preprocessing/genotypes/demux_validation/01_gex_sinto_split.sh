@@ -1,0 +1,1 @@
+for lib in $(ls barcodes/* | sed 's|barcodes/||g' | sed 's|_barcodes.txt||g'); do echo $lib; mkdir gex.sinto/$lib; sinto filterbarcodes -b bams/${lib}_gex_possorted_bam.bam -c barcodes/${lib}_barcodes.txt --outdir gex.sinto/$lib/ > sinto.${lib}.gex.log 2>&1 & done

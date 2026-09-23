@@ -1,0 +1,185 @@
+#!/bin/bash
+#SBATCH --job-name=merge_hc
+#SBATCH --output=logs/merge_hc_%A_%a.out
+#SBATCH --error=logs/merge_hc_%A_%a.err
+#SBATCH --array=0-85%20        # adjust upper bound to (n_donors - 1)
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=64G
+#SBATCH --time=48:00:00
+#SBATCH --partition=condo
+#SBATCH --qos=condo
+#SBATCH --account=csd854
+
+# ── Configuration ─────────────────────────────────────────────────────────────
+ATAC_SINTO_DIR="atac.sinto"
+GEX_SINTO_DIR="gex.sinto"
+MERGED_DIR="donor.bams"
+VCF_DIR="donor.vcfs"
+CONCORDANCE_DIR="concordance"
+REF="/tscc/projects/ps-gaultonlab/ref/ref_genome_GRCh38.p14/hg38.p14.fa"          # ← update
+SITES_VCF="/tscc/projects/ps-gaultonlab/welison/FNIH.Liver/18_Geno_Validate_demux/Liver.QTL.r209.maf05.matchednames.vcf.gz"
+GATK="gatk"
+SAMTOOLS="samtools"
+
+mkdir -p logs "$MERGED_DIR" "$VCF_DIR" "$CONCORDANCE_DIR"
+
+# ── Discover donors ───────────────────────────────────────────────────────────
+mapfile -t DONORS < <(
+    find "$ATAC_SINTO_DIR" "$GEX_SINTO_DIR" -name "*.bam" ! -name "*sorted*" \
+        | xargs -n1 basename \
+        | sed 's/\.bam$//' \
+        | sort -u
+)
+
+DONOR="${DONORS[$SLURM_ARRAY_TASK_ID]}"
+if [[ -z "$DONOR" ]]; then
+    echo "No donor for task index $SLURM_ARRAY_TASK_ID — exiting."
+    exit 0
+fi
+
+echo "Processing donor: $DONOR"
+
+if [[ -f "$VCF_DIR/${DONOR}.vcf.gz" ]]; then
+    echo "VCF already exists"
+    exit 0
+fi
+
+# ── Check donor exists in the sites VCF ──────────────────────────────────────
+# Warns if the donor name isn't a sample in the array VCF (sample swap risk)
+if ! bcftools query -l "$SITES_VCF" | grep -qx "$DONOR"; then
+    echo "WARNING: $DONOR not found as a sample in $SITES_VCF — concordance check will be skipped"
+    DONOR_IN_ARRAY=false
+else
+    DONOR_IN_ARRAY=true
+fi
+
+# ── Collect all BAMs for this donor ──────────────────────────────────────────
+mapfile -t BAMS < <(
+    find "$ATAC_SINTO_DIR" "$GEX_SINTO_DIR" -name "${DONOR}.bam"
+)
+
+if [[ ${#BAMS[@]} -eq 0 ]]; then
+    echo "ERROR: no BAMs found for donor $DONOR"
+    exit 1
+fi
+
+echo "Found ${#BAMS[@]} BAMs:"
+printf '  %s\n' "${BAMS[@]}"
+
+# ── Sort each BAM ─────────────────────────────────────────────────────────────
+SORTED_BAMS=()
+for BAM in "${BAMS[@]}"; do
+    SORTED="${BAM%.bam}.sorted.bam"
+    if [[ ! -f "$SORTED" ]]; then
+        echo "Sorting $BAM ..."
+        $SAMTOOLS sort -@ "$SLURM_CPUS_PER_TASK" -o "$SORTED" "$BAM"
+        $SAMTOOLS index "$SORTED"
+    fi
+    SORTED_BAMS+=("$SORTED")
+done
+
+# ── Merge ─────────────────────────────────────────────────────────────────────
+MERGED="$MERGED_DIR/${DONOR}.merged.bam"
+
+if [[ ! -f "$MERGED" ]]; then
+    echo "Merging into $MERGED ..."
+    $SAMTOOLS merge -@ "$SLURM_CPUS_PER_TASK" -f "$MERGED" "${SORTED_BAMS[@]}"
+    $SAMTOOLS index "$MERGED"
+fi
+
+# Clean up sorted BAMs once merge is confirmed
+if [[ -f "$MERGED" ]]; then
+    for SORTED in "${SORTED_BAMS[@]}"; do
+        rm -f "$SORTED" "${SORTED}.bai"
+    done
+fi
+
+# ── Add read groups ───────────────────────────────────────────────────────────
+MERGED_RG="$MERGED_DIR/${DONOR}.merged.rg.bam"
+
+if [[ ! -f "$MERGED_RG" ]]; then
+    echo "Adding read groups ..."
+    $GATK AddOrReplaceReadGroups \
+        -I "$MERGED" \
+        -O "$MERGED_RG" \
+        --RGID "$DONOR" \
+        --RGLB "$DONOR" \
+        --RGPL ILLUMINA \
+        --RGPU "$DONOR" \
+        --RGSM "$DONOR" \
+        --SORT_ORDER coordinate \
+        --CREATE_INDEX true \
+        --VALIDATION_STRINGENCY LENIENT \
+	--TMP_DIR /tscc/lustre/ddn/scratch/$USER
+fi
+
+# Clean up plain merged BAM once RG BAM is confirmed
+if [[ -f "$MERGED_RG" ]]; then
+    rm -f "$MERGED" "${MERGED%.bam}.bam.bai"
+fi
+
+# ── Mark duplicates ───────────────────────────────────────────────────────────
+MARKDUP="$MERGED_DIR/${DONOR}.markdup.bam"
+METRICS="$MERGED_DIR/${DONOR}.markdup.metrics.txt"
+
+if [[ ! -f "$MARKDUP" ]]; then
+    echo "Marking duplicates ..."
+    $GATK MarkDuplicates \
+        -I "$MERGED_RG" \
+        -O "$MARKDUP" \
+        -M "$METRICS" \
+        --CREATE_INDEX true \
+	--TMP_DIR /tscc/lustre/ddn/scratch/$USER
+fi
+
+# Clean up RG BAM once markdup BAM is confirmed
+if [[ -f "$MARKDUP" ]]; then
+    rm -f "$MERGED_RG" "${MERGED_RG%.bam}.bai"
+fi
+
+# ── HaplotypeCaller: forced calling at array sites ────────────────────────────
+VCF="$VCF_DIR/${DONOR}.vcf.gz"
+
+if [[ ! -f "$VCF" ]]; then
+    echo "Running HaplotypeCaller (forced calling at array sites) ..."
+    $GATK HaplotypeCaller \
+        -R "$REF" \
+        -I "$MARKDUP" \
+        -O "$VCF" \
+        -L "$SITES_VCF" \
+        --alleles "$SITES_VCF" \
+        --sample-name "$DONOR" \
+        --native-pair-hmm-threads "$SLURM_CPUS_PER_TASK" \
+        --tmp-dir /tscc/lustre/ddn/scratch/$USER
+fi
+
+# Clean up markdup BAM once VCF is confirmed
+if [[ -f "$VCF" ]]; then
+    rm -f "$MARKDUP" "${MARKDUP%.bam}.bai" "$METRICS"
+fi
+
+## ── Genotype concordance vs array ─────────────────────────────────────────────
+## Compares seq-derived calls against imputed array genotypes for this donor.
+## Low concordance (<95%) suggests a sample swap or severe coverage problems.
+#CONCORDANCE_DIR="concordance"
+#mkdir -p "$CONCORDANCE_DIR"
+#
+#if [[ "$DONOR_IN_ARRAY" == true && ! -f "$CONCORDANCE_DIR/${DONOR}.concordance.summary" ]]; then
+#    echo "Running genotype concordance check ..."
+#
+#    # Extract this donor's array genotypes as single-sample VCF
+#    ARRAY_SINGLE="$CONCORDANCE_DIR/${DONOR}.array.vcf.gz"
+#    bcftools view -s "$DONOR" -O z -o "$ARRAY_SINGLE" "$SITES_VCF"
+#    bcftools index -t "$ARRAY_SINGLE"
+#
+#    $GATK GenotypeConcordance \
+#        --CALL_VCF "$VCF" \
+#        --CALL_SAMPLE "$DONOR" \
+#        --TRUTH_VCF "$ARRAY_SINGLE" \
+#        --TRUTH_SAMPLE "$DONOR" \
+#        --OUTPUT "$CONCORDANCE_DIR/${DONOR}.concordance" \
+#        --MISSING_HOM true
+#fi
+
+echo "Done: $DONOR"

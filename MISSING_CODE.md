@@ -6,7 +6,7 @@ This list was built by comparing the Methods and figure legends against the code
 
 | Methods section | What is missing | Figures | Likely owner |
 |---|---|---|---|
-| Single cell multiome clustering | Demultiplexing benchmark: sinto split by donor, GATK HaplotypeCaller, `bcftools gtcheck` discordance | Supp | Gaulton lab |
+| Single cell multiome clustering | Demultiplexing benchmark, partly added in `01_preprocessing/genotypes/demux_validation/`. Still missing: the `bcftools gtcheck` and KING commands that make the files read by `260610_WE_KING.ipynb` (`gtcheck_results_v2.txt`, `joint_king_v2.king`), and the Droplet Paired-Tag bam splitting/genotype calling (only multiome GEX/ATAC splitting is included) | Supp | Gaulton lab |
 | Visualization of ATAC and histone tracks | Scripts that split bams/tagAligns by cell type/condition and run `bamCoverage` (RPGC, no chrY) | 1D, 3F, 5F, 5H | Ren lab / Gaulton lab |
 | Identifying chromatin loops | scHiCluster loop calling, Peakachu, Mustache, HiCCUPS; consensus loops (NMS / union-find); O/E loop strength (cooltools); eulerr plots | 1E, 2C, 3F, 5F, 5H | Ren lab (Yang Xie) |
 | Compartment analysis | Compartment switch / monotonic analysis and dcHiC differential compartments (only `hicluster compartment` is present) | Supp | Ren lab |
@@ -14,7 +14,7 @@ This list was built by comparing the Methods and figure legends against the code
 | Loop annotations | Anchor annotation (TSS/cCRE), hepatocyte anchor k-means, clusterProfiler `enrichGO` | Supp | Ren lab |
 | Genome annotation using ChromHMM | Splitting fragments by cell type, `BinarizeBed`, `LearnModel` (5 states). The notebook only reads the results | 2B | Ren lab |
 | Evolutionary analysis of cCREs | RepeatMasker/TE age overlap, phastCons profiles (deepTools), gnomAD-SV CNV Fisher tests | Supp | – |
-| Cell type marker genes | Entropy-based marker selection (DescTools `Entropy`) | 6B, Supp | Gaulton lab |
+| Cell type marker genes | Entropy-based marker selection at the **cell type** level. The hepatocyte sub-type version is in `05_differential_analysis/240925_MK_Calculate_per_Hepatocyte_Cellsubtype_Entropy2_Clean.ipynb` (Fig 6B) | Supp | Gaulton lab |
 | Cell type-specific cCREs | SnapATAC2 regression test (the notebook reads `snapatac2_cellsubtype_LR_test.csv`) | 2F, 6E | Ren lab |
 | cis-regulatory modules | scikit-learn NMF runs and rank selection (the notebook reads the `NMF/res/*.r9n10` outputs) | 2D | Ren lab |
 | Gene regulatory network modeling | SketchData downsampling, pycisTopic, SCENIC+ run | 2C, 3G–I, 6F | – |
@@ -47,5 +47,6 @@ These scripts are called by code in the repository but live elsewhere on TSCC. A
 
 - `01_preprocessing/paired_tag/08.proc_10Xarc_DNA.sh` points to an **mm10** reference (`refdata-cellranger-arc-mm10-2020-A-2.0.0`). Check whether this is the version run on the human liver data.
 - `01_preprocessing/multiome/240827_WE_Liver_Peaks_Add_New_Peak_Mat.ipynb` was superseded by `241018_...Our_Pipeline.ipynb`. Keep it for transparency or remove it.
+- `03_merge_and_call_genotypes.sb` has the per-donor GATK `GenotypeConcordance` step commented out, and discordance was computed with `bcftools gtcheck` instead. Consider removing the commented block or noting this in the script.
 - The spatial SLURM scripts contain a personal email in `--mail-user`. Consider replacing it with a placeholder.
 - The `Seurat5.0 DecontX` kernel (`seurat5.0.1.decontx`), used by most R notebooks, is not one of the exported conda environments. See `envs/README.md`.

@@ -13,6 +13,9 @@ DESeq2 and fGSEA for RNA in each cell type (Figures 3A and 3B).
 ### `240918_MK_Liver_RNA_DEseq_Hepatocytes_Subtypes.ipynb`
 DESeq2 and fGSEA for RNA in each hepatocyte sub-type (Figures 6G and 6H).
 
+### `240925_MK_Calculate_per_Hepatocyte_Cellsubtype_Entropy2_Clean.ipynb`
+Finds hepatocyte sub-type marker genes from pseudobulk TPM. It converts TPM to proportions across the five sub-types and computes entropy with DescTools `Entropy`. A gene counts as a marker for a sub-type if it has low entropy, its maximum TPM is in that sub-type, and TPM > 1. It exports the unique marker genes per sub-type and the top 500 lowest-entropy genes (Figure 6B).
+
 ### `241022_WE_Liver_ATAC_DEseq.ipynb`
 DESeq2 for ATAC in each cell type (Figure 3A).
 

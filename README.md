@@ -13,7 +13,7 @@ Directories are numbered in the order the analyses were run. Each directory has 
 
 | Directory | Contents | Main figures |
 |---|---|---|
-| [`01_preprocessing/`](01_preprocessing) | Genotyping/imputation, 10x multiome, Droplet Paired-Tag, Droplet Hi-C and Visium HD processing (incl. Tangram) | Methods |
+| [`01_preprocessing/`](01_preprocessing) | Genotyping/imputation and demultiplexing validation, 10x multiome, Droplet Paired-Tag, Droplet Hi-C and Visium HD processing (incl. Tangram) | Methods |
 | [`02_integration/`](02_integration) | Reference mapping of Paired-Tag and Hi-C onto multiome, joint UMAP, donor/QC summaries | 1B, 1C, 1F |
 | [`03_composition/`](03_composition) | Cell type proportion changes (scCODA, miloR) | 1G, 6D |
 | [`04_regulatory_annotation/`](04_regulatory_annotation) | cCREs, ChromHMM states, cell type-specific cCREs, NMF modules, motifs, SCENIC+ links | 2A–D, 2F–H, 3D–E |
@@ -52,6 +52,7 @@ Related repositories:
 | 5 | E | `08_MASLD_loci/250325_WE_annotating_gwas_v2.ipynb` |
 | 5 | F–I | `08_MASLD_loci/250303_WE_Plot_QTLs.ipynb`, `08_MASLD_loci/chrombpnet.variant.effects.sh` |
 | 6 | A | `01_preprocessing/multiome/241018_WE_Liver_Peaks_Add_New_Peak_Mat_Our_Pipeline.ipynb` |
+| 6 | B | `05_differential_analysis/240925_MK_Calculate_per_Hepatocyte_Cellsubtype_Entropy2_Clean.ipynb` |
 | 6 | C | `01_preprocessing/spatial/03_tangram/` |
 | 6 | D | `03_composition/` (scCODA hepatocytes, miloR) |
 | 6 | E | `04_regulatory_annotation/Liver_analysis.ipynb`, `241217_WE_Prep_HOMER_For_TSCC.ipynb` |
@@ -60,7 +61,7 @@ Related repositories:
 | 6 | J | `09_hepatocyte_trajectory/241113_WE_Liver_Hepatocyte_Union_Peaks.ipynb` |
 | 6 | K, L | `10_spatial_analysis/fig6K-L_inflammatory_hepatocytes/` |
 
-Panels not listed (1A, 1D, 1E, 2C loops, 3C, 3F–H, 6B, 6F, 6M) are either schematics, genome browser views, or produced by code listed in [`MISSING_CODE.md`](MISSING_CODE.md).
+Panels not listed (1A, 1D, 1E, 2C loops, 3C, 3F–H, 6F, 6M) are either schematics, genome browser views, or produced by code listed in [`MISSING_CODE.md`](MISSING_CODE.md).
 
 ## Data
 Processed data are available at https://epigenome.wustl.edu/MASLD/. Raw and supplementary data will be available soon.

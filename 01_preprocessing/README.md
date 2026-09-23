@@ -12,6 +12,10 @@ Processing of each assay from raw data to annotated single-cell objects.
 
 ## genotypes/
 - `Genotype_Processing.md`: Notes and commands for array export, imputation on the TOPMed server, filtering (R2>0.9, MAF>0.01), and subsetting VCFs per pool for demuxlet.
+- `demux_validation/`: Checks demuxlet donor assignments by comparing genotypes called from the sequencing data against the array genotypes (Supplementary). Run in order:
+  1. `01_gex_sinto_split.sh`, `02_atac_sinto_split.sh`: Split each multiome library's GEX and ATAC bams by donor with `sinto filterbarcodes`. Needs a `barcodes/<library>_barcodes.txt` file per library.
+  2. `03_merge_and_call_genotypes.sb`: SLURM array job with one task per donor. Merges the donor's bams across libraries and modalities, sorts them, adds read groups, marks duplicates, and runs GATK HaplotypeCaller only at the array sites and alleles (`-L`/`--alleles`). Set `REF` and `SITES_VCF` at the top of the script.
+  3. `260610_WE_KING.ipynb`: Plots `bcftools gtcheck` discordance and KING kinship between sequencing- and array-derived genotypes for multiome and Droplet Paired-Tag donors.
 
 ## paired_tag/
 - `07.proc_10Xarc_RNA.sh`, `08.proc_10Xarc_DNA.sh`: cellranger-arc/cellranger-atac processing of the RNA and histone (DNA) libraries.
