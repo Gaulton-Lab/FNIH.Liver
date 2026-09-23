@@ -6,7 +6,6 @@ This list was built by comparing the Methods and figure legends against the code
 
 | Methods section | What is missing | Figures | Likely owner |
 |---|---|---|---|
-| Single cell multiome clustering | Demultiplexing benchmark, partly added in `01_preprocessing/genotypes/demux_validation/`. Still missing: the `bcftools gtcheck` and KING commands that make the files read by `260610_WE_KING.ipynb` (`gtcheck_results_v2.txt`, `joint_king_v2.king`), and the Droplet Paired-Tag bam splitting/genotype calling (only multiome GEX/ATAC splitting is included) | Supp | Gaulton lab |
 | Visualization of ATAC and histone tracks | Scripts that split bams/tagAligns by cell type/condition and run `bamCoverage` (RPGC, no chrY) | 1D, 3F, 5F, 5H | Ren lab / Gaulton lab |
 | Identifying chromatin loops | scHiCluster loop calling, Peakachu, Mustache, HiCCUPS; consensus loops (NMS / union-find); O/E loop strength (cooltools); eulerr plots | 1E, 2C, 3F, 5F, 5H | Ren lab (Yang Xie) |
 | Compartment analysis | Compartment switch / monotonic analysis and dcHiC differential compartments (only `hicluster compartment` is present) | Supp | Ren lab |
