@@ -1,0 +1,18 @@
+ls: cannot access 'subsets/*.h5ad': No such file or directory
+tangram SPA_FP: 
+tangram SC_FP: 
+tangram MARKERS: 
+tangram POST_RNA_NAME: tangram_runs/Post_scRNA_
+tangram POST_SP_NAME: tangram_runs/Post_sp_
+tangram CELL DENSITY: 
+2025-02-06 10:55:07.922557: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2025-02-06 10:55:08.140806: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2025-02-06 10:55:08.209012: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-02-06 10:55:09.277479: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-02-06 10:55:23.907124: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+scanpy==1.10.1 anndata==0.10.8 umap==0.5.6 numpy==1.26.4 scipy==1.14.0 pandas==2.2.2 scikit-learn==1.5.1 statsmodels==0.14.2 igraph==0.11.5 pynndescent==0.5.13
+squidpy==1.6.0
+2025-02-06 10:55:40.441976
+Usage: python tangram_train_sp.py spatialAnnData scRNAannData admap_output_name adge_output_name markers
+Check your inputs
