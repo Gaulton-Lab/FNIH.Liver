@@ -29,7 +29,7 @@ FINRICH and HOMER on cCREs by chromatin state and on sites changing in accessibi
 FINRICH and HOMER on NMF cCRE modules (Figure 2D).
 
 ### `LDSC.sh`
-Example of how LDSC was run. Peaks were lifted to hg19. The steps are: munge the GWAS, make annotations, compute LD scores, then run partitioned heritability with `--h2-cts`.
+Example of how LDSC was run. Peaks were lifted to hg19. The steps are: munge the GWAS, make annotations, compute LD scores, then run partitioned heritability with `--h2-cts`. The end of the script computes genetic correlations (`--rg`, European LD scores) of the MVP cALT GWAS with FinnGen cirrhosis (CHIRHEP_NAS) and with FinnGen NAFLD.
 
 ### `241221_WE_LDSC_Plotting.ipynb`
 Plots LDSC enrichment for cell types, modalities, sub-types, and chromatin states (Figure 2E).

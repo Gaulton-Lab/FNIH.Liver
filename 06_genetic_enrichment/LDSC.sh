@@ -78,3 +78,37 @@ srun --job-name=86bam.all \
 				--w-ld-chr /tscc/projects/ps-gaultonlab/ref/LDSC/weights_hm3_no_hla/weights. &     
               
 wait   
+
+srun --job-name=Cirrhosis.coheritability \
+         --output=Cirrhosis.coheritability.%j.out \
+         --error=Cirrhosis.coheritability.%j.err \
+         --nodes=1 \
+         --ntasks-per-node=1 \
+         --cpus-per-task=10 \
+         --mem=32G \
+         --account=csd854 \
+         -t 24:00:00 \
+         -p condo \
+         -q condo \
+         python /tscc/nfs/home/welison/git.packages/ldsc/ldsc.py \
+--rg /tscc/projects/ps-gaultonlab/welison/FNIH.Liver/LDSC/debug/trait/NAFLD.EUR.MVP.2021.sumstats.gz,CHIRHEP_NAS_meta_out_filtered.na_filt.column_filt.ldsc.sumstats.gz \
+--ref-ld-chr /tscc/projects/ps-gaultonlab/ref/LDSC/eur_w_ld_chr/ \
+--w-ld-chr /tscc/projects/ps-gaultonlab/ref/LDSC/eur_w_ld_chr/ \
+--out cALT.Cirrhosis.coheritability
+
+srun --job-name=Cirrhosis.coheritability \
+         --output=Cirrhosis.coheritability.%j.out \
+         --error=Cirrhosis.coheritability.%j.err \
+         --nodes=1 \
+         --ntasks-per-node=1 \
+         --cpus-per-task=10 \
+         --mem=32G \
+         --account=csd854 \
+         -t 24:00:00 \
+         -p condo \
+         -q condo \
+         python /tscc/nfs/home/welison/git.packages/ldsc/ldsc.py \
+--rg /tscc/projects/ps-gaultonlab/welison/FNIH.Liver/LDSC/debug/trait/NAFLD.EUR.MVP.2021.sumstats.gz,finngen_R11_NAFLD_meta_out_filtered.na_filt.column_filt.ldsc.sumstats.gz \
+--ref-ld-chr /tscc/projects/ps-gaultonlab/ref/LDSC/eur_w_ld_chr/ \
+--w-ld-chr /tscc/projects/ps-gaultonlab/ref/LDSC/eur_w_ld_chr/ \
+--out cALT.NAFLD.coheritability

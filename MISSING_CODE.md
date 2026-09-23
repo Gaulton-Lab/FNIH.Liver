@@ -22,7 +22,6 @@ This list was built by comparing the Methods and figure legends against the code
 | GRN validation | regioneR `permTest` with ENCODE HepG2 ChIP-seq | Supp | – |
 | GRN connectivity | igraph graph of TF GRNs linked by fine-mapped variants | 3I (bottom) | Gaulton lab |
 | Effect size correlations | Spearman correlation across MASLD stages; cross-modality Pearson correlation | Supp | Gaulton lab |
-| LDSC | Genetic correlation (`--rg`) between cALT, NAFLD and cirrhosis GWAS | Supp | Gaulton lab |
 | ChromBPNet | Bias and bias-factorized model training for the four hepatocyte conditions; variant scoring (`log_counts_diff`). Only the peak prep and allele bigwig script are present | 5E, 5G, 5I | – |
 | Comparison to other studies | AUCell scoring of Gribben/Karpova markers; DESeq2 on Gribben et al.; fGSEA of GRNs on Gribben results | Supp | Gaulton lab |
 | Pseudotime robustness | Palantir and Slingshot (SeuratExtend), per-donor analyses | Supp | – |
@@ -48,5 +47,6 @@ These scripts are called by code in the repository but live elsewhere on TSCC. A
 - `01_preprocessing/paired_tag/08.proc_10Xarc_DNA.sh` points to an **mm10** reference (`refdata-cellranger-arc-mm10-2020-A-2.0.0`). Check whether this is the version run on the human liver data.
 - `01_preprocessing/multiome/240827_WE_Liver_Peaks_Add_New_Peak_Mat.ipynb` was superseded by `241018_...Our_Pipeline.ipynb`. Keep it for transparency or remove it.
 - `03_merge_and_call_genotypes.sb` has the per-donor GATK `GenotypeConcordance` step commented out, and discordance was computed with `bcftools gtcheck` instead. Consider removing the commented block or noting this in the script.
+- `06_genetic_enrichment/LDSC.sh` computes cALT–cirrhosis and cALT–NAFLD `--rg`. The Methods say correlations were calculated between all three GWAS, so NAFLD–cirrhosis may be missing. The script also uses FinnGen **R11** NAFLD summary stats, but the Methods cite FinnGen **R9**.
 - The spatial SLURM scripts contain a personal email in `--mail-user`. Consider replacing it with a placeholder.
 - The `Seurat5.0 DecontX` kernel (`seurat5.0.1.decontx`), used by most R notebooks, is not one of the exported conda environments. See `envs/README.md`.
