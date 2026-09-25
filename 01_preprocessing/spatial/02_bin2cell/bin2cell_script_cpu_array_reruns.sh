@@ -11,62 +11,53 @@
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
 #SBATCH --mail-user cnmiciano@health.ucsd.edu     # Optional, Send mail to this address
 
+# SLURM array job: runs bin2cell_script.py for one library (one array task =
+# one line of bin2cell_samp_md_reruns.txt).
+#
+# Sample sheet columns (tab-separated; see bin2cell_samp_md_reruns.txt),
+# 1-indexed to match the file's actual column order:
+#   1: library_id                      e.g. QY_2645_1_2_3
+#   2: patient_id                      e.g. HL180809
+#   3: condition
+#   4: image_path                      brightfield image used as spaceranger input
+#   5: spaceranger_micron2_path        square_002um binned-outputs dir
+#   6: spaceranger_spatial_dir_path    spaceranger "spatial" outputs dir
+#   7: mpp                             microns per pixel (0.5 default; 0.25 advised for liver)
+#
+# FIX (this pass): the sample sheet is tab-delimited, but this script
+# previously parsed it with `cut -f<N> -d' '` (splitting on spaces). Since
+# the file has no spaces to split on, that returned the entire line as a
+# single field for every column, silently breaking every value below. Now
+# parsed with a single tab-delimited `read`. This also surfaced that
+# PATIENT_ID and LIBRARY_ID were previously assigned from the wrong columns
+# (swapped relative to the sheet's real column order above) -- fixed to
+# match the actual header. Also removed a broken `mkdir $OUTDIR_SAMP` call
+# referencing a variable that was never assigned (its assignment line was
+# commented out); bin2cell_script.py already creates its own per-patient
+# output directory internally, so this wasn't needed.
 
-# activate cond env
+# activate conda env
 source /tscc/nfs/home/cmiciano/miniconda3/etc/profile.d/conda.sh
 
 conda activate spatial
 
 Script='/tscc/projects/ps-epigen/users/cmiciano/Liver/RNA/spatial/scripts/bin2cell/bin2cell_script.py'
 #Script='/tscc/lustre/ddn/scratch/tvashist/charlene/scripts/bin2cell_script.py'
-##bin2cell.py two_micron_path source_image_path spatial_dir outdir patient_id mpp
+## Usage: bin2cell_script.py patient_id library_id condition source_img_path mic2_path spatial_dir_path outdir_samp_path mpp
 
 SAMP_MD_TABLE='/tscc/projects/ps-epigen/users/cmiciano/Liver/RNA/spatial/scripts/bin2cell/bin2cell_samp_md_reruns.txt'
 #SAMP_MD_TABLE='/tscc/lustre/ddn/scratch/tvashist/charlene/scripts/bin2cell_samp_md.txt'
 
 TASK_ID=${SLURM_ARRAY_TASK_ID}
 
-SAMPLE_LINE=`cat $SAMP_MD_TABLE | sed -n $((TASK_ID + 1))p`
+SAMPLE_LINE=$(sed -n "$((TASK_ID + 1))p" "$SAMP_MD_TABLE")  # +1 to skip the header row
 
-# patient identifier for dataset ex. HL160029, will be used to name directory and output filess
-#PATIENT_ID='HL180801'
-PATIENT_ID=$(echo $SAMPLE_LINE | cut -f1 -d' ')
-
-
-# library_id
-#LIBRARY_ID='JL_101'
-LIBRARY_ID=$(echo $SAMPLE_LINE | cut -f2 -d' ')
-
-# condition
-CONDITION=$(echo $SAMPLE_LINE | cut -f3 -d' ')
-
-## brightfield image that is used as input to spaceranger
-SOURCE_IMG_PATH=$(echo $SAMPLE_LINE | cut -f4 -d' ')
-#SOURCE_IMG_PATH='/tscc/lustre/ddn/scratch/tvashist/charlene/input_images/MASL_HL180801_2nd_reg.tif'
-
-# directory where two micron matrices are located (from spaceranger)
-# usually formatted as path1/library_id/outs/binned_outputs/square_002uml
-#MIC2_PATH='/tscc/projects/ps-epigen/10x_output/Space_Ranger/outputs4/loupe/JL_101/outs/binned_outputs/square_002um/'
-MIC2_PATH=$(echo $SAMPLE_LINE | cut -f5 -d' ')
-
-# directory where spatial files are located (from spaceranger)
-# usually formatted as path1/library_id/outs/spatial
-SPATIAL_DIR=$(echo $SAMPLE_LINE | cut -f6 -d' ')
-#SPATIAL_DIR='/tscc/projects/ps-epigen/10x_output/Space_Ranger/outputs4/loupe/JL_101/outs/spatial'
+IFS=$'\t' read -r LIBRARY_ID PATIENT_ID CONDITION SOURCE_IMG_PATH MIC2_PATH SPATIAL_DIR MPP <<< "$SAMPLE_LINE"
+#MPP='0.25'
 
 OUTDIR='/tscc/projects/ps-epigen/users/cmiciano/Liver/RNA/outputs/sandbox/spatial/bin2cell_array_cpu/'
 
-#OUTDIR_SAMP="${OUTDIR}${PATIENT_ID}"
-
-# microns per pixel, default is 0.5 but advised to use 0.25 for liver
-MPP=$(echo $SAMPLE_LINE | cut -f7 -d' ')
-#MPP='0.25'
-
 [[ -d $OUTDIR ]] || mkdir $OUTDIR
-[[ -d $OUTDIR_SAMP ]] || mkdir $OUTDIR_SAMP
-
-#echo $PATH
-#echo $LD_LIBRARY_PATH
 
 echo $PATIENT_ID
 echo $LIBRARY_ID
@@ -78,5 +69,3 @@ echo $OUTDIR
 echo $MPP
 
 python $Script $PATIENT_ID $LIBRARY_ID $CONDITION $SOURCE_IMG_PATH $MIC2_PATH $SPATIAL_DIR $OUTDIR $MPP
-#python $Script $MIC2_PATH $SOURCE_IMG_PATH $SPATIAL_DIR $OUTDIR $PATIENT_ID $MPP
-	      
