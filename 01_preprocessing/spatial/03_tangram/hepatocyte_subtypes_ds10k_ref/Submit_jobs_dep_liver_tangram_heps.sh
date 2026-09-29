@@ -9,7 +9,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/submit_jobs_dep_liver_tangram_heps.sh.e
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/submit_jobs_dep_liver_tangram_heps.sh.o
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # Driver for the hepatocyte-subtype Tangram pipeline, ds10k_ref variant
 # (reference scRNA subset/downsampled to 10k cells).

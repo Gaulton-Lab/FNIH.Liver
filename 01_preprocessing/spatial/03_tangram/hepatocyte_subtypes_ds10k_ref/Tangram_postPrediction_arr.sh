@@ -7,7 +7,7 @@
 #SBATCH --qos=condo
 #SBATCH --job-name=pp_arr
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # SLURM array job: post-processes one Tangram output chunk (one array task
 # per subset produced by Split_h5ad.py / tans_tangram_train_sp_gpu_arr.sh).

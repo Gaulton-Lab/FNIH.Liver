@@ -9,7 +9,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/sub_jobs_liver_nash_filt_ds.sh.e
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/sub_jobs_liver_nash_filt_ds.sh.o
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # Driver for the broad-cell-type Tangram pipeline, NASH condition.
 #

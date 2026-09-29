@@ -11,7 +11,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/tans_script_nash_gpu_arr_heps_dep.e-%a
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/tans_script_nash_gpu_arr_heps_dep.o-%a
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # NOTE: as in merge_patches.sh, the original "# -e" / "# -o" lines here were
 # missing the "#SBATCH" prefix and so were not actually taking effect; fixed
