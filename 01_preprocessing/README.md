@@ -20,6 +20,7 @@ Processing of each assay from raw data to annotated single-cell objects.
 ## paired_tag/
 - `07.proc_10Xarc_RNA.sh`, `08.proc_10Xarc_DNA.sh`: cellranger-arc/cellranger-atac processing of the RNA and histone (DNA) libraries.
 - `DPT_help.R`: Helper functions for Droplet Paired-Tag analysis in R.
+- `12.bamCoverage.sh`: Makes bigwigs with deepTools `bamCoverage` (RPGC for DNA, RPKM for RNA) from cell type- or condition-split bams. Used for genome browser tracks.
 - `DPT_preprocess.ipynb`: QC of the DNA modality, FRiP, and manual DNA + RNA barcode filtering per library.
 - `DPT_clustering.ipynb`: Reads demultiplexing results, merges libraries, applies quality filtering and runs SoupX per library.
 
@@ -36,8 +37,12 @@ Run in numeric order:
 - `hicluster_embedding.ipynb`: Builds the scGAD matrix and maps Hi-C cells onto the multiome RNA reference (PyNNDescent label transfer).
 
 ## spatial/
-- `01_spaceranger/spaceranger_reruns_liver.sh`: `spaceranger count` with manual Loupe alignment.
-- `02_bin2cell/`: StarDist/bin2cell segmentation of 2 µm bins into cells (`bin2cell_script.py`, array submission script and sample sheet).
-- `03_tangram/`: Tangram mapping of hepatocyte sub-types onto Visium HD hepatocytes (Figure 6C).
-  - `reference_markers/`: Notebooks defining the top-50 `rank_genes_groups` markers per disease group (normal, MASL, MASH).
-  - `hepatocyte_subtypes_ds10k_ref/`, `hepatocyte_subtypes_highfib_lowfib/`: Split h5ad into 10k-cell patches, train Tangram on GPU, post-process and merge patches. The `.tsv` files list the input datasets.
+- `01_spaceranger/`: `spaceranger_reruns_liver.sh` runs `spaceranger count` with manual Loupe alignment on the samples in `spaceranger_samples.txt`.
+- `02_bin2cell/`: StarDist/bin2cell segmentation of 2 µm bins into cells (`bin2cell_script.py`, array submission script and sample sheet). `241205_filtering_bin2cell_liver_samples_deepseq.ipynb` filters the segmented cells.
+- `03_tangram/`: Tangram label transfer from the multiome RNA onto Visium HD. Each run splits the h5ad into 10k-cell patches (`Split_h5ad.py`), trains Tangram on GPU, post-processes, and merges the patches. The `Submit_jobs_*.sh` scripts chain these steps as dependent SLURM jobs.
+  - `reference_markers/`:
+    - `250130_02_rna_multiome_rdstoanndata.ipynb` converts the multiome RNA object to AnnData.
+    - `2411*_Tangram_preprocessing_*.ipynb` define the broad cell-type markers per disease group (normal, MASL, MASH).
+    - `250214_*_define_rank_genes_*.ipynb` define the hepatocyte sub-type markers.
+  - `broad_celltypes/`: Broad cell-type Tangram per disease group (normal, MASL, NASH/MASH). `241205_03_tangram_prob_filter_clean.ipynb` clips and scales the probabilities, assigns labels, and removes cells with scaled probability < 0.5 (Figure 1H).
+  - `hepatocyte_subtypes_ds10k_ref/`, `hepatocyte_subtypes_highfib_lowfib/`: Hepatocyte sub-type Tangram on cells labelled as hepatocytes in the broad run (Figure 6C). The `.tsv` files list the input datasets.

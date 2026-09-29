@@ -16,13 +16,13 @@ Directories are numbered in the order the analyses were run. Each directory has 
 | [`01_preprocessing/`](01_preprocessing) | Genotyping/imputation and demultiplexing validation, 10x multiome, Droplet Paired-Tag, Droplet Hi-C and Visium HD processing (incl. Tangram) | Methods |
 | [`02_integration/`](02_integration) | Reference mapping of Paired-Tag and Hi-C onto multiome, joint UMAP, donor/QC summaries | 1B, 1C, 1F |
 | [`03_composition/`](03_composition) | Cell type proportion changes (scCODA, miloR) | 1G, 6D |
-| [`04_regulatory_annotation/`](04_regulatory_annotation) | cCREs, ChromHMM states, cell type-specific cCREs, NMF modules, motifs, SCENIC+ links | 2A–D, 2F–H, 3D–E |
+| [`04_regulatory_annotation/`](04_regulatory_annotation) | cCREs, ChromHMM states, cell type-specific cCREs, NMF modules, motifs, SCENIC+ GRNs, Hi-C chromatin loops, gnomAD-SV overlap | 2A–D, 2F–H, 3D–E, 3G–H |
 | [`05_differential_analysis/`](05_differential_analysis) | Pseudobulk, DESeq2 and fGSEA across MASLD stages for cell types and hepatocyte sub-types | 3A–B, 6G–I |
 | [`06_genetic_enrichment/`](06_genetic_enrichment) | LDSC partitioned heritability, FINRICH fine-mapped variant enrichment, HOMER on differential/clustered sites | 2E, 3I |
 | [`07_QTL/`](07_QTL) | tensorQTL mapping, mashr specificity, cross-modality QTL coloc, motifbreakR | 5A–C |
 | [`08_MASLD_loci/`](08_MASLD_loci) | GWAS–QTL colocalization, annotation of MASLD loci, chromBPNet variant effects, locus plots | 5D–I |
 | [`09_hepatocyte_trajectory/`](09_hepatocyte_trajectory) | Hepatocyte union peaks and Monocle3 pseudotime | 6J |
-| [`10_spatial_analysis/`](10_spatial_analysis) | Visium HD marker heatmaps, inflammatory hepatocyte module scores and neighborhood enrichment | 1I, 6K–L |
+| [`10_spatial_analysis/`](10_spatial_analysis) | Visium HD cell type plots, marker heatmaps, pathway and inflammatory hepatocyte module scores, neighborhood enrichment | 1H, 1I, 3C, 6K–L |
 | [`envs/`](envs) | Conda environments for the Jupyter kernels used in the notebooks | – |
 
 Related repositories:
@@ -34,15 +34,17 @@ Related repositories:
 |---|---|---|
 | 1 | B, C, F | `02_integration/Liver_integration.ipynb` (C also uses `05_differential_analysis/1_Pseudobulk_TPM_CPM.ipynb`) |
 | 1 | G | `03_composition/260302_WE_scCODA*.ipynb` |
-| 1 | H | `01_preprocessing/spatial/` (see missing code below) |
+| 1 | H | `01_preprocessing/spatial/03_tangram/broad_celltypes/`, `10_spatial_analysis/fig1H_broad_celltypes/` |
 | 1 | I | `10_spatial_analysis/fig1I_marker_heatmap/` |
-| 2 | A, B, D, F, H | `04_regulatory_annotation/Liver_analysis.ipynb` |
-| 2 | C | `04_regulatory_annotation/Liver_analysis.ipynb` (SCENIC+ links, APA plots) |
+| 2 | A, B, D, F, H | `04_regulatory_annotation/Liver_analysis.ipynb` (B: `chromhmm/`; D: `nmf_modules/`) |
+| 2 | C | `04_regulatory_annotation/Liver_analysis.ipynb` (SCENIC+ links, APA plots), `scenicplus/`, `chromatin_loops/` |
 | 2 | E | `06_genetic_enrichment/241221_WE_LDSC_Plotting.ipynb`, `250408_WE_FINRICH_and_Homer_For_TSCC_High_Fibrosis_and_cRE_States.ipynb`, `08_MASLD_loci/250124_WE_Hep_cREs_Intersect.ipynb` |
 | 2 | G | `04_regulatory_annotation/241217_WE_Prep_HOMER_For_TSCC.ipynb`, `241224_WE_Homer_fGSEA_on_specific_links.ipynb` |
 | 3 | A | `05_differential_analysis/*DEseq*.ipynb` |
 | 3 | B | `05_differential_analysis/240829_WE_Liver_RNA_DEseq.ipynb` |
+| 3 | C | `10_spatial_analysis/supp_fig21_ecm_fatty_acid/` |
 | 3 | D, E | `04_regulatory_annotation/Liver_analysis.ipynb`, `05_differential_analysis/241227_WE_Homer_DAC_cluster_sites.ipynb`, `06_genetic_enrichment/250219_*` |
+| 3 | G, H | `04_regulatory_annotation/scenicplus/Liver_GRNs_fgsea_plots.ipynb` |
 | 3 | I | `06_genetic_enrichment/250220_WE_Prep_FINRICH_For_TSCC_GRNs.ipynb`, `241221_WE_Prep_FINRICH_For_TSCC_states_GRNs_H3K27me3_bins.ipynb` |
 | 4 | A–E | Wet-lab experiments (qRT-PCR, ImageJ quantification); no code |
 | 5 | A | `07_QTL/241122_WE_Plotting_Summaries.ipynb` |
@@ -61,7 +63,7 @@ Related repositories:
 | 6 | J | `09_hepatocyte_trajectory/241113_WE_Liver_Hepatocyte_Union_Peaks.ipynb` |
 | 6 | K, L | `10_spatial_analysis/fig6K-L_inflammatory_hepatocytes/` |
 
-Panels not listed (1A, 1D, 1E, 2C loops, 3C, 3F–H, 6F, 6M) are either schematics, genome browser views, or produced by code listed in [`MISSING_CODE.md`](MISSING_CODE.md).
+Panels not listed (1A, 1D, 1E, 3F, 6F, 6M) are either schematics, genome browser views, or produced by code listed in [`MISSING_CODE.md`](MISSING_CODE.md).
 
 ## Data
 Processed data are available at https://epigenome.wustl.edu/MASLD/. Raw and supplementary data will be available soon.
