@@ -9,7 +9,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Heart/spatial/split_h5ad.sh.e
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Heart/spatial/split_h5ad.sh.o
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # SLURM wrapper for Split_h5ad.py: splits a spatial .h5ad into fixed-size
 # chunks (subsets/) ahead of a Tangram array run.

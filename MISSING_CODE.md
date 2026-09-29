@@ -51,5 +51,4 @@ These scripts are called by code in the repository but live elsewhere on TSCC. A
 - `01_preprocessing/multiome/240827_WE_Liver_Peaks_Add_New_Peak_Mat.ipynb` was superseded by `241018_...Our_Pipeline.ipynb`. Keep it for transparency or remove it.
 - `03_merge_and_call_genotypes.sb` has the per-donor GATK `GenotypeConcordance` step commented out, and discordance was computed with `bcftools gtcheck` instead. Consider removing the commented block or noting this in the script.
 - `06_genetic_enrichment/LDSC.sh` computes cALT–cirrhosis and cALT–NAFLD `--rg`. The Methods say correlations were calculated between all three GWAS, so NAFLD–cirrhosis may be missing. The script also uses FinnGen **R11** NAFLD summary stats, but the Methods cite FinnGen **R9**.
-- The spatial SLURM scripts contain a personal email in `--mail-user`. Consider replacing it with a placeholder.
 - The `Seurat5.0 DecontX` kernel (`seurat5.0.1.decontx`), used by most R notebooks, is not one of the exported conda environments. See `envs/README.md`.

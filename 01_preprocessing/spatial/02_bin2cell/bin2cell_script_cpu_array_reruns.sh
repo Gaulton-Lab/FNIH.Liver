@@ -9,7 +9,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/bin2cell_cpu_reruns.e-%a
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/bin2cell_cpu_reruns.o-%a
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu     # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>     # Optional, Send mail to this address
 
 # SLURM array job: runs bin2cell_script.py for one library (one array task =
 # one line of bin2cell_samp_md_reruns.txt).

@@ -9,7 +9,7 @@
 #SBATCH -e /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/sub_jobs_liver_b2c_split_filt.sh.e-%a
 #SBATCH -o /tscc/nfs/home/cmiciano/job_outs/Liver/RNA/spatial/sub_jobs_liver_b2c_split_filt.sh.o-%a
 #SBATCH --mail-type BEGIN,END                      # Optional, Send mail when the job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu      # Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL>      # Optional, Send mail to this address
 
 # SLURM array entry point (broad cell types): for one sample (one array task
 # = one line of the sample sheet below), submits split_h5ad.sh to split that

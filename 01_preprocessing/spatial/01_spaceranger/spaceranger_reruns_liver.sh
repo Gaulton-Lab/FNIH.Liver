@@ -9,7 +9,7 @@
 #SBATCH -q condo                #QOS name
 #SBATCH -A csd772               #Allocation name
 #SBATCH --mail-type ALL         #Optional, Send mail when job ends
-#SBATCH --mail-user cnmiciano@health.ucsd.edu #Optional, Send mail to this address
+#SBATCH --mail-user <YOUR_EMAIL> #Optional, Send mail to this address
 #SBATCH --propagate=NONE
 #SBATCH --job-name=sr_liv
 #
